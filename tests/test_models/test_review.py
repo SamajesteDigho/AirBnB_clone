@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 """
-    Test file for the User Model
+    Test file for the Review Model
 """
 import unittest
-from models.user import User
+from models.review import Review
 
 
 class TestUserModel(unittest.TestCase):
-    """The user testing model"""
+    """The review testing model"""
     def test_initialization(self):
         """Initialization test"""

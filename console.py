@@ -3,11 +3,11 @@
     The console file
     This is the entry point of the program. it uses the cmd module
 """
-from cmd import Cmd
+import cmd
 from models import storage
 
 
-class HBNBCommand(Cmd):
+class HBNBCommand(cmd.Cmd):
     """The class controlling the console action"""
     intro = ""
     prompt = "(hbnb) "
@@ -29,10 +29,13 @@ class HBNBCommand(Cmd):
         if len(line) == 0:
             print("Documented commands (type help <topic>):")
             print("========================================")
-            print("EOF  help  quit\n")
+            print("EOF  help  quit")
         else:
             if line == "quit":
-                print("Quit command to exit the program\n")
+                print("Quit command to exit the program")
+            else:
+                print("help {}".format(line))
+        print()
 
     def do_create(self, line):
         """Create new instance of BaseModel"""
@@ -63,7 +66,8 @@ class HBNBCommand(Cmd):
                 new = Amenity()
             elif line == "Review":
                 new = Review()
-            new.save()
+            storage.new(obj=new)
+            storage.save()
             print("{}".format(new.id))
 
     def do_show(self, line):

@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 """
-    Test file for the User Model
+    Test file for the Place Model
 """
 import unittest
-from models.user import User
+from models.place import Place
 
 
 class TestUserModel(unittest.TestCase):
-    """The user testing model"""
+    """The place testing model"""
     def test_initialization(self):
         """Initialization test"""

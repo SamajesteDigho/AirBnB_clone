@@ -10,9 +10,6 @@ class FileStorage:
     __file_path = "file.json"
     __objects = {}
 
-    def __init__(self):
-        """Initialisation of the class instance"""
-
     def all(self):
         """Returns the dictionary of objects"""
         return self.__objects

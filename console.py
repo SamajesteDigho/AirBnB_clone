@@ -4,8 +4,22 @@
     This is the entry point of the program. it uses the cmd module
 """
 import cmd
+import re
 from models import storage
+from models.base_model import BaseModel
+from models.user import User
+from models.place import Place
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
 
+
+func_line_regex = r"[A-Z][a-zA-Z]*\.[a-zA-Z]+\(.*\)"
+parameter_1 = r'"[a-zA-Z0-9\-]+"'
+param_1_regex = r"\({}\)".format(parameter_1)
+param_2_regex = r'\(({}(\, ?)?)*\)'.format(parameter_1)
+param_3_regex = r"\((\"[a-zA-Z0-9\-]*\"(\,)? )*\)"
 
 class HBNBCommand(cmd.Cmd):
     """The class controlling the console action"""
@@ -21,7 +35,7 @@ class HBNBCommand(cmd.Cmd):
         """Defining the end of file mechanism"""
         return True
 
-    def emptyline(self, line):
+    def emptyline(self):
         """Executing the empty line"""
 
     def do_help(self, line):
@@ -39,13 +53,6 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, line):
         """Create new instance of BaseModel"""
-        from models.base_model import BaseModel
-        from models.user import User
-        from models.place import Place
-        from models.state import State
-        from models.city import City
-        from models.amenity import Amenity
-        from models.review import Review
         if len(line) == 0:
             print("** class name missing **")
         elif line not in ["BaseModel", "User", "Place", "State", "City",
@@ -116,7 +123,7 @@ class HBNBCommand(cmd.Cmd):
             objects = storage.all()
             result = []
             for x in objects:
-                result.append(objects[x].__str__())
+                result.append("{}".format(objects[x]))
             print(result)
 
     def do_update(self, line):
@@ -146,10 +153,66 @@ class HBNBCommand(cmd.Cmd):
             return
         else:
             from models.base_model import BaseModel
-            BaseModel.__setattr__(obj_inst, params[2], params[3])
+            value = params[3].replace('"', "")
+            BaseModel.__setattr__(obj_inst, params[2], value)
             storage.delete(key=key)
             storage.new(obj=obj_inst)
             obj_inst.save()
+
+    def precmd(self, line):
+        """Analysing the command and processing it accordingly"""
+        if re.match(func_line_regex, line):
+            self.process_object_methods(line)
+            return ""
+        else:
+            return super().precmd(line)
+    
+    def process_object_methods(self, line):
+        """Processing object methods"""
+        parts = line.split(".")
+        object_name = parts[0]
+        if object_name not in ["BaseModel", "User", "Place", "State", "City",
+                             "Amenity", "Review"]:
+            print("** object {} does not exist **".format(object_name))
+            return
+        else:
+            func = parts[1].split("(")[0]
+            if func == "all":
+                result = storage.all_class(class_name=object_name)
+                string = ""
+                for i, x in enumerate(result):
+                    string += x.__str__()
+                    if i < len(result) - 1:
+                        string += ","
+                string = "[{}]".format(string)
+                print(string)
+            elif func == "count":
+                counter = storage.count_class(class_name=object_name)
+                print(counter)
+            elif func == "show":
+                pattern = re.findall(param_1_regex, line)
+                if len(pattern) == 0 or len(pattern[0]) == 0:
+                    print("** instance id not defined **")
+                    return
+                id = pattern[0][1:-1].replace('"', "")
+                result = storage.show_class(class_name=object_name, id=id)
+                if result is None:
+                    print("** no instance found **")
+                else:
+                    print(result.__str__())
+            elif func == "destroy":
+                pattern = re.findall(param_1_regex, line)
+                if len(pattern) == 0:
+                    print("** instance id not defined **")
+                    return
+                id = pattern[0][1:-1].replace('"', "")
+                result = storage.destroy_class(class_name=object_name, id=id)
+                if not result:
+                    print("** no instance found **")
+            elif func == "update":
+                print(param_2_regex)
+                pattern = re.search(param_2_regex, line)
+                print(pattern.groups)
 
 
 if __name__ == "__main__":

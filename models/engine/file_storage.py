@@ -56,3 +56,33 @@ class FileStorage:
     def delete(self, key):
         """Remove an instance"""
         del self.__objects[key]
+        self.save()
+    
+    def all_class(self, class_name):
+        """Display all elements of a given class"""
+        result = []
+        for x in self.__objects:
+            if class_name in x:
+                result.append(self.__objects[x])
+        return result
+    
+    def count_class(self, class_name):
+        """Return number of elements of a given class"""
+        inst = self.all_class(class_name=class_name)
+        return len(inst)
+
+    def show_class(self, class_name, id):
+        """Show property of given id"""
+        key = "{}.{}".format(class_name, id)
+        if key in self.__objects.keys():
+            return self.__objects[key]
+        else:
+            return None
+    
+    def destroy_class(self, class_name, id):
+        """Destroy property of given id"""
+        key = "{}.{}".format(class_name, id)
+        if key in self.__objects.keys():
+            self.delete(key=key)
+            return True
+        return False

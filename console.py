@@ -19,7 +19,7 @@ func_line_regex = r"[A-Z][a-zA-Z]*\.[a-zA-Z]+\(.*\)"
 parameter_1 = r'"[a-zA-Z0-9\-]+"'
 param_1_regex = r"\({}\)".format(parameter_1)
 param_2_regex = r'\(({}(\, ?)?)*\)'.format(parameter_1)
-param_3_regex = r"\((\"[a-zA-Z0-9\-]*\"(\,)? )*\)"
+
 
 class HBNBCommand(cmd.Cmd):
     """The class controlling the console action"""
@@ -166,13 +166,13 @@ class HBNBCommand(cmd.Cmd):
             return ""
         else:
             return super().precmd(line)
-    
+
     def process_object_methods(self, line):
         """Processing object methods"""
         parts = line.split(".")
         object_name = parts[0]
         if object_name not in ["BaseModel", "User", "Place", "State", "City",
-                             "Amenity", "Review"]:
+                               "Amenity", "Review"]:
             print("** object {} does not exist **".format(object_name))
             return
         else:

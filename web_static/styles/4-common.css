@@ -1,4 +1,5 @@
 body {
+    height: 100%;
     padding: 0;
     margin: 0;
     color: #484848;
@@ -7,6 +8,7 @@ body {
 }
 
 .container {
+    min-height: calc(100vh - 132px - 60px);
     max-width: 1000px;
     margin-top: 30px;
     margin-bottom: 30px;
